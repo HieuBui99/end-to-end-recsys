@@ -1,0 +1,6 @@
+torch
+fastai
+numpy 
+pandas
+pydantic
+prefect==2.10.2

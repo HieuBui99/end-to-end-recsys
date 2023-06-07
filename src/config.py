@@ -6,3 +6,4 @@ class Location(BaseModel):
 
     raw_dir = "data/raw"
     processed_dir = "data/processed"
+    model_dir = "model"

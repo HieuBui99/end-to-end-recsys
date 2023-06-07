@@ -55,18 +55,20 @@ def preprocess(raw_path: Union[str, Path], save_path: Union[str, Path]):
 
     return save_path / "processed_data.csv"
 
+
 @flow(log_prints=True)
 def ingest_gbq(path: Union[str, Path]):
     df = pd.read_csv(path)
-    
+
     credential = GcpCredentials.load("gcp-credential")
 
     df.to_gbq(
         "movie_lens.ratings",
         "data-eng-383104",
-        if_exists='replace',
-        credentials=credential.get_credentials_from_service_account()
+        if_exists="replace",
+        credentials=credential.get_credentials_from_service_account(),
     )
+
 
 @flow(log_prints=True)
 def process_data(location: Location = Location()):
@@ -75,6 +77,7 @@ def process_data(location: Location = Location()):
     print(f"Data saved to {save_path}")
     ingest_gbq(save_path)
     print(f"Data logged to Google BigQuery")
+
 
 if __name__ == "__main__":
     process_data()

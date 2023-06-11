@@ -2,6 +2,7 @@ from fastai.collab import *
 from fastai.tabular.all import *
 from prefect import flow, task
 from prefect_gcp import GcpCredentials
+from prefect.deployments import Deployment
 
 from config import Location
 
@@ -45,4 +46,11 @@ def train(location: Location = Location()):
 
 
 if __name__ == "__main__":
-    train()
+    deployment = Deployment.build_from_flow(
+        flow=train,
+        name="train-model",
+        infra_overrides={"env": {"PREFECT_LOGGING_LEVEL": "DEBUG"}},
+        work_queue_name="movielens",
+    )
+    deployment.apply()
+    

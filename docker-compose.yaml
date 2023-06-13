@@ -21,6 +21,9 @@ services:
     entrypoint: ["minio", "server", "--address", "0.0.0.0:9000", "--console-address", "0.0.0.0:9001", "/data"]
     volumes:
       - "minio:/data"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
     ports:
       - 9000:9000
       - 9001:9001
@@ -52,9 +55,10 @@ services:
   agent:
     image: prefecthq/prefect:2.10.13-python3.9
     restart: always
-    entrypoint: ["prefect", "agent", "start", "-q", "movielens"]
+    entrypoint: ["/opt/prefect/entrypoint.sh", "prefect", "agent", "start", "-q", "movielens"]
     environment:
       - PREFECT_API_URL=http://server:4200/api
+      - EXTRA_PIP_PACKAGES=torch==1.8 fastai==2.7.0 prefect_aws pandas_gbq prefect_gcp s3fs
 #       Use PREFECT_API_KEY if connecting the agent to Prefect Cloud
 #     - PREFECT_API_KEY=YOUR_API_KEY
     profiles: ["agent"]

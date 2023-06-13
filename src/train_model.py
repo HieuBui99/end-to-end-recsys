@@ -23,8 +23,9 @@ def get_data():
 @task(log_prints=True)
 def train_model(df: pd.DataFrame):
     print("Starting training")
-    dls = CollabDataLoaders.from_df(df.loc[:, ["user", "movie", "rating"]], bs=8)
-    print(dls.show_batch())
+    df = df.loc[:, ["user", "movie", "rating"]]
+    df = df.astype({"rating": "float"})
+    dls = CollabDataLoaders.from_df(df, bs=8)
     learn = collab_learner(dls, n_factors=50, y_range=(0, 5.5))
     learn.fit_one_cycle(5, 5e-3, wd=0.1, cbs=[ShortEpochCallback()])
 
@@ -34,7 +35,7 @@ def train_model(df: pd.DataFrame):
 
 @task(log_prints=True)
 def save_model(learn: Learner, save_dir: Union[str, Path]):
-    learn.path = Path(save_dir)
+    # learn.path = Path(save_dir)
     learn.export("model.pkl")
 
 

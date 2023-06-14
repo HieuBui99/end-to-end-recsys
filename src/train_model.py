@@ -1,11 +1,17 @@
+import os
+import wandb
+
+from dotenv import load_dotenv
 from fastai.collab import *
 from fastai.tabular.all import *
+from fastai.callback.wandb import WandbCallback
 from prefect import flow, task
 from prefect_gcp import GcpCredentials
 from prefect.deployments import Deployment
 
 from config import Location
 
+load_dotenv()
 
 @task(log_prints=True)
 def get_data():
@@ -21,37 +27,43 @@ def get_data():
 
 
 @task(log_prints=True)
-def train_model(df: pd.DataFrame):
+def train_model(df: pd.DataFrame, location: Location = Location()):
+    wandb.init()
+
     print("Starting training")
-    df = df.loc[:, ["user", "movie", "rating"]]
     df = df.astype({"rating": "float"})
-    dls = CollabDataLoaders.from_df(df, bs=8)
+    dls = CollabDataLoaders.from_df(df, item_name='title', bs=8, path=location.model_dir)
     learn = collab_learner(dls, n_factors=50, y_range=(0, 5.5))
-    learn.fit_one_cycle(5, 5e-3, wd=0.1, cbs=[ShortEpochCallback()])
+    learn.fit_one_cycle(2, 5e-3, wd=0.1, cbs=[ShortEpochCallback(), WandbCallback(log_preds=False)])
 
     print("Finished training")
     return learn
 
 
 @task(log_prints=True)
-def save_model(learn: Learner, save_dir: Union[str, Path]):
-    # learn.path = Path(save_dir)
+def save_model(learn: Learner):
+    if not os.path.exists(learn.path):
+        os.makedirs(learn.path)
     learn.export("model.pkl")
-
+    
+    #log to wandb
+    artifact_model = wandb.Artifact(name="embedding-model", type='model')
+    artifact_model.add_file(str(learn.path/'model.pkl'))
+    wandb.run.log_artifact(artifact_model)
 
 @flow
 def train(location: Location = Location()):
     df = get_data()
     learn = train_model(df)
-    save_model(learn, location.model_dir)
+    save_model(learn)
 
 
-if __name__ == "__main__":
-    deployment = Deployment.build_from_flow(
-        flow=train,
-        name="train-model",
-        infra_overrides={"env": {"PREFECT_LOGGING_LEVEL": "DEBUG"}},
-        work_queue_name="movielens",
-    )
-    deployment.apply()
+# if __name__ == "__main__":
+#     # deployment = Deployment.build_from_flow(
+#     #     flow=train,
+#     #     name="train-model",
+#     #     infra_overrides={"env": {"PREFECT_LOGGING_LEVEL": "DEBUG"}},
+#     #     work_queue_name="movielens",
+#     # )
+#     # deployment.apply()
     

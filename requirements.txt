@@ -3,4 +3,7 @@ fastai
 numpy 
 pandas
 pydantic
+wandb
+prefect_aws
+prefect_gcp
 prefect==2.10.2

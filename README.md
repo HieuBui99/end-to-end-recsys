@@ -8,11 +8,11 @@ Tech stack:
 * Fastai and Pytorch for training collaborative filtering model
 
 ## TODO 
-- [ ] Data pipeline
-- [ ] Training pipeline
-- [ ] Experiment tracking 
-- [ ] Model registry
-- [ ] Model serving
+- [x] Data pipeline
+- [x] Training pipeline
+- [x] Experiment tracking 
+- [x] Model registry
+- [x] Model serving
 - [ ] Testing
 - [ ] CI/CD
-- [ ] Docker 
+- [x] Docker 

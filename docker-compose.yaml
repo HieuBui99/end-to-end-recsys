@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.5"
 services:
 
   ### Prefect Database
@@ -72,10 +72,20 @@ services:
       - "./src:/root/flows"
     environment:
       - PREFECT_API_URL=http://server:4200/api
-#       Use PREFECT_API_KEY to use the CLI to interact with Prefect Cloud
-#     - PREFECT_API_KEY=YOUR_API_KEY
     profiles: ["cli"]
-      
+
+  # Model server
+  bento_service:
+    image: recommendation_service:latest
+    # entrypoint: ["serve"]
+    volumes:
+      - "./bentoml/bentoml_configuration.yaml:/home/bentoml/bentoml_configuration.yaml"
+    ports:
+      - 3000:3000
+    environment:
+      - BENTOML_CONFIG=/home/bentoml/bentoml_configuration.yaml
+    profiles: ["bentoml"]
+
 volumes:
   prefect:
   db:

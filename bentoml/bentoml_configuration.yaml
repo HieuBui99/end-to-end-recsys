@@ -1,0 +1,9 @@
+version: 1
+api_server:
+  workers: 2
+
+runners:
+  batching:
+    enabled: true
+    max_batch_size: 64
+    max_latency_ms: 1000

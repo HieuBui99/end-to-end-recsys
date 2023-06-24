@@ -8,6 +8,5 @@ jobs:
       - uses: actions/checkout@v3
       - name: test-ci
         run: |
-          pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
           echo "Hello world"
     

@@ -76,7 +76,7 @@ def process_data(location: Location = Location()):
     save_path = preprocess(raw_path, location.processed_dir)
     print(f"Data saved to {save_path}")
     ingest_gbq(save_path)
-    print(f"Data logged to Google BigQuery")
+    print("Data logged to Google BigQuery")
 
 
 if __name__ == "__main__":

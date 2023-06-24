@@ -1,0 +1,47 @@
+{
+    "os": "Linux-5.15.0-1035-gcp-x86_64-with-glibc2.31",
+    "python": "3.9.16",
+    "heartbeatAt": "2023-06-14T09:05:26.230577",
+    "startedAt": "2023-06-14T09:05:25.443159",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/aki/end-to-end-recsys/src/train_model.py",
+    "codePath": "src/train_model.py",
+    "git": {
+        "remote": "https://github.com/HieuBui99/end-to-end-recsys.git",
+        "commit": "cf37ab5f2cb94e1de90ae71327ba3f7146732dd8"
+    },
+    "email": "hieu25121999@gmail.com",
+    "root": "/home/aki/end-to-end-recsys",
+    "host": "instance-1",
+    "username": "aki",
+    "executable": "/home/aki/miniconda3/envs/venv/bin/python",
+    "cpu_count": 1,
+    "cpu_count_logical": 2,
+    "cpu_freq": {
+        "current": 2200.224,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2200.224,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2200.224,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "total": 19.20184326171875,
+        "used": 13.749732971191406
+    },
+    "memory": {
+        "total": 7.760463714599609
+    }
+}

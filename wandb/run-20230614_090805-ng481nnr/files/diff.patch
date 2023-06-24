@@ -1,0 +1,79 @@
+diff --git a/requirements.txt b/requirements.txt
+index ff9dbd1..94890cc 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -3,4 +3,7 @@ fastai
+ numpy 
+ pandas
+ pydantic
++wandb
++prefect_aws
++prefect_gcp
+ prefect==2.10.2
+diff --git a/src/train_model.py b/src/train_model.py
+index edb7da4..dfc69b6 100644
+--- a/src/train_model.py
++++ b/src/train_model.py
+@@ -1,11 +1,16 @@
++import wandb
++
++from dotenv import load_dotenv
+ from fastai.collab import *
+ from fastai.tabular.all import *
++from fastai.callback.wandb import WandbCallback
+ from prefect import flow, task
+ from prefect_gcp import GcpCredentials
+ from prefect.deployments import Deployment
+ 
+ from config import Location
+ 
++load_dotenv()
+ 
+ @task(log_prints=True)
+ def get_data():
+@@ -22,12 +27,13 @@ def get_data():
+ 
+ @task(log_prints=True)
+ def train_model(df: pd.DataFrame):
++    wandb.init()
++
+     print("Starting training")
+-    df = df.loc[:, ["user", "movie", "rating"]]
+     df = df.astype({"rating": "float"})
+-    dls = CollabDataLoaders.from_df(df, bs=8)
++    dls = CollabDataLoaders.from_df(df, item_name='title', bs=8)
+     learn = collab_learner(dls, n_factors=50, y_range=(0, 5.5))
+-    learn.fit_one_cycle(5, 5e-3, wd=0.1, cbs=[ShortEpochCallback()])
++    learn.fit_one_cycle(2, 5e-3, wd=0.1, cbs=[ShortEpochCallback(), WandbCallback(log_preds=False)])
+ 
+     print("Finished training")
+     return learn
+@@ -36,6 +42,7 @@ def train_model(df: pd.DataFrame):
+ @task(log_prints=True)
+ def save_model(learn: Learner, save_dir: Union[str, Path]):
+     # learn.path = Path(save_dir)
++    learn.save('model')
+     learn.export("model.pkl")
+ 
+ 
+@@ -47,11 +54,12 @@ def train(location: Location = Location()):
+ 
+ 
+ if __name__ == "__main__":
+-    deployment = Deployment.build_from_flow(
+-        flow=train,
+-        name="train-model",
+-        infra_overrides={"env": {"PREFECT_LOGGING_LEVEL": "DEBUG"}},
+-        work_queue_name="movielens",
+-    )
+-    deployment.apply()
++    train()
++    # deployment = Deployment.build_from_flow(
++    #     flow=train,
++    #     name="train-model",
++    #     infra_overrides={"env": {"PREFECT_LOGGING_LEVEL": "DEBUG"}},
++    #     work_queue_name="movielens",
++    # )
++    # deployment.apply()
+     
+\ No newline at end of file

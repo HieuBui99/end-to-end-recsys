@@ -4,6 +4,8 @@ numpy
 pandas
 pydantic
 wandb
+bentoml
+dotenv
 prefect_aws
 prefect_gcp
 prefect==2.10.2

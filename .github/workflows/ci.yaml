@@ -2,11 +2,19 @@ name: GitHub Actions Demo
 
 on: [push]
 jobs:
-  hello-world:
+  build-model-server:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: test-ci
-        run: |
-          echo "Hello world"
-    
+      
+      - name: Set up Python 
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt 
+
+      - name: Build bentoml
+        run: make bento
+

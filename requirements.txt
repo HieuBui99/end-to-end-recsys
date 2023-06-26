@@ -5,7 +5,7 @@ pandas
 pydantic
 wandb
 bentoml
-dotenv
+python-dotenv
 prefect_aws
 prefect_gcp
 prefect==2.10.2

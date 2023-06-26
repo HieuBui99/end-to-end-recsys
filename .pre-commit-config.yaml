@@ -9,14 +9,17 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
+        args: ["./src"]
 
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
         language_version: python3.9
+        args: ["./src"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.0.275
     hooks:
       - id: ruff
+        args: ["./src"]

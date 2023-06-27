@@ -13,6 +13,34 @@ Tech stack:
 - [x] Experiment tracking 
 - [x] Model registry
 - [x] Model serving
-- [ ] Testing
-- [ ] CI/CD
+- [x] Testing
+- [x] CI/CD
 - [x] Docker 
+
+## Setup
+
+1. Install dependencies
+```python
+pip install -r requirements.txt
+```
+
+2. Start the prefect server and agent in a docker container. This will also start a MinIO server to store flow code
+```
+make prefect
+```
+
+3. Export wandb API key
+```
+export WANDB_API_KEY=***
+```
+or put your key in a `.env` file
+
+4. Build model server. This will download the model weight from the model registry to build and containerize the model server:
+```
+make bento
+```
+
+5. Install pre-commit hook for auto-formatting and linting:
+ ```
+ pre-commit install
+ ```
